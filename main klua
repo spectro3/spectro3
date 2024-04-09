@@ -1,0 +1,1019 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "spxy hub v2",
+   LoadingTitle = "spxy hub v2",
+   LoadingSubtitle = "by spxy",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = false, -- Create a custom folder for your hub/game
+      FileName = "spxy Hub"
+   },
+   Discord = {
+      Enabled = true,
+      Invite = "3ujcrW2XGf", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = false -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "spxy Hub",
+      Subtitle = "spxy hub Key System",
+      Note = ".gg/spxy ",
+      FileName = "spxy", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = false, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = true, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"https://pastebin.com/3HcmdMCj"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local MainTab = Window:CreateTab("Main", nil) -- Title, Image
+local MainSection = MainTab:CreateSection("main")
+
+Rayfield:Notify({
+   Title = "you used spxy hub gui",
+   Content = "spxy hub is 100% safe",
+   Duration = 5,
+   Image = 4483362458,
+   Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Spxy on top!",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+   },
+},
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Jump",
+   Callback = function()
+  _G.infinjump = true
+ 
+local Player = game:GetService("Players").LocalPlayer
+local Mouse = Player:GetMouse()
+Mouse.KeyDown:connect(function(k)
+if _G.infinjump then
+if k:byte() == 32 then
+Humanoid = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+Humanoid:ChangeState("Jumping")
+wait(0.1)
+Humanoid:ChangeState("Seated")
+end
+end
+end)
+ 
+local Player = game:GetService("Players").LocalPlayer
+local Mouse = Player:GetMouse()
+Mouse.KeyDown:connect(function(k)
+k = k:lower()
+if k == "r" then
+if _G.infinjump == true then
+_G.infinjump = false
+else
+_G.infinjump = true
+end
+end
+end)
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "aimbot (dh)",
+   Callback = function()
+   local new = { 
+    main = { 
+        Mario = true,
+        Prediction = 0.1659992222222,
+        Part = "HumanoidRootPart", -- Head, UpperTorso, HumanoidRootPart, LowerTorso, RightFoot, LeftFoot, RightArm, LeftArm 
+        Key = "x",
+        Notifications = true,
+        AirshotFunc = true
+    },
+    Tracer = { 
+        TracerThickness = 3.5, -- made by thusky
+        TracerTransparency = 1, -- made by thusky
+        TracerColor = Color3.fromRGB(153, 50, 204) -- made by thusky
+    }
+}
+
+
+local CurrentCamera = game:GetService "Workspace".CurrentCamera
+local Mouse = game.Players.LocalPlayer:GetMouse()
+local RunService = game:GetService("RunService")
+local Plr = game.Players.LocalPlayer
+local Line = Drawing.new("Line")
+local Inset = game:GetService("GuiService"):GetGuiInset().Y
+
+Mouse.KeyDown:Connect(function(KeyPressed)
+    if KeyPressed == (new.main.Key) then
+        if new.main.Mario == true then
+            new.main.Mario = false
+            if new.main.Notifications == true then
+                Plr = FindClosestUser()
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "spxy hub",
+                    Text = "No longer locked on"
+                })
+            end
+        else
+            Plr = FindClosestUser()
+            new.main.Mario = true
+            if new.main.Notifications == true then
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "spxy hub",
+                    Text = "Locked on to:" .. tostring(Plr.Character.Humanoid.DisplayName)
+                })
+            end
+        end
+    end
+end)
+
+function FindClosestUser()
+    local closestPlayer
+    local shortestDistance = math.huge
+
+    for i, v in pairs(game.Players:GetPlayers()) do
+        if v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild("Humanoid") and
+            v.Character.Humanoid.Health ~= 0 and v.Character:FindFirstChild("HumanoidRootPart") then
+            local pos = CurrentCamera:WorldToViewportPoint(v.Character.PrimaryPart.Position)
+            local magnitude = (Vector2.new(pos.X, pos.Y) - Vector2.new(Mouse.X, Mouse.Y)).magnitude
+            if magnitude < shortestDistance then
+                closestPlayer = v
+                shortestDistance = magnitude
+            end
+        end
+    end
+    return closestPlayer
+end
+
+
+
+
+RunService.Stepped:connect(function()
+    if new.main.Mario == true then
+        local Vector = CurrentCamera:WorldToViewportPoint(Plr.Character[new.main.Part].Position +
+                                                              (Plr.Character.HumanoidRootPart.Velocity *
+                                                                  new.main.Prediction))
+        Line.Color = new.Tracer.TracerColor                                                                          -- made by spectro
+        Line.Thickness = new.Tracer.TracerThickness
+        Line.Transparency = new.Tracer.TracerTransparency
+ 
+
+        Line.From = Vector2.new(Mouse.X, Mouse.Y + Inset)
+        Line.To = Vector2.new(Vector.X, Vector.Y)
+        Line.Visible = true
+    else
+        Line.Visible = false
+
+    end
+end)
+
+
+local mt = getrawmetatable(game)
+local old = mt.__namecall
+setreadonly(mt, false)
+mt.__namecall = newcclosure(function(...)
+    local args = {...}
+    if new.main.Mario and getnamecallmethod() == "FireServer" and args[2] == "UpdateMousePos" then
+        args[3] = Plr.Character[new.main.Part].Position +
+                      (Plr.Character[new.main.Part].Velocity * new.main.Prediction)
+        return old(unpack(args))
+    end
+    return old(...)
+end)
+
+if new.main.AirshotFunc == true then
+    if Plr.Character.Humanoid.Jump == true and Plr.Character.Humanoid.FloorMaterial == Enum.Material.Air then
+        settings.main.Part = "RightFoot"
+    else
+        Plr.Character:WaitForChild("Humanoid").StateChanged:Connect(function(old,new)
+            if new == Enum.HumanoidStateType.Freefall then
+                settings.main.Part = "RightFoot"
+            else
+                settings.main.Part = "LowerTorso"
+            end
+        end)
+    end
+end
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Fly",  ----controls F TO TOGGLE IT G GO DOWN THE FLIGHT
+   Callback = function()
+   repeat wait() 
+    until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:findFirstChild("Head") and game.Players.LocalPlayer.Character:findFirstChild("Humanoid") 
+local mouse = game.Players.LocalPlayer:GetMouse() 
+repeat wait() until mouse
+local plr = game.Players.LocalPlayer 
+local torso = plr.Character.Head 
+local flying = false
+local deb = true 
+local ctrl = {f = 0, b = 0, l = 0, r = 0} 
+local lastctrl = {f = 0, b = 0, l = 0, r = 0} 
+local maxspeed = 400 
+local speed = 50000 
+ 
+function Fly() 
+local bg = Instance.new("BodyGyro", torso) 
+bg.P = 9e4 
+bg.maxTorque = Vector3.new(9e9, 9e9, 9e9) 
+bg.cframe = torso.CFrame 
+local bv = Instance.new("BodyVelocity", torso) 
+bv.velocity = Vector3.new(0,0.1,0) 
+bv.maxForce = Vector3.new(9e9, 9e9, 9e9) 
+repeat wait() 
+plr.Character.Humanoid.PlatformStand = true 
+if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then 
+speed = speed+.5+(speed/maxspeed) 
+if speed > maxspeed then 
+speed = maxspeed 
+end 
+elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then 
+speed = speed-1 
+if speed < 0 then 
+speed = 500 
+end 
+end 
+if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then 
+bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed 
+lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r} 
+elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then 
+bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed 
+else 
+bv.velocity = Vector3.new(0,0.1,0) 
+end 
+bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0) 
+until not flying 
+ctrl = {f = 0, b = 0, l = 0, r = 0} 
+lastctrl = {f = 0, b = 0, l = 0, r = 0} 
+speed = 0 
+bg:Destroy() 
+bv:Destroy() 
+plr.Character.Humanoid.PlatformStand = false 
+end 
+mouse.KeyDown:connect(function(key) 
+if key:lower() == "g" then 
+if flying then flying = false 
+else 
+flying = true 
+Fly() 
+end 
+elseif key:lower() == "w" then 
+ctrl.f = 1 
+elseif key:lower() == "s" then 
+ctrl.b = -1 
+elseif key:lower() == "a" then 
+ctrl.l = -1 
+elseif key:lower() == "d" then 
+ctrl.r = 1 
+end 
+end) 
+mouse.KeyUp:connect(function(key) 
+if key:lower() == "w" then 
+ctrl.f = 0 
+elseif key:lower() == "s" then 
+ctrl.b = 0 
+elseif key:lower() == "a" then 
+ctrl.l = 0 
+elseif key:lower() == "d" then 
+ctrl.r = 0 
+end 
+end)
+Fly()
+   end,
+})
+
+local MiscTab = Window:CreateTab("🛠️Misc", nil) -- Title, Image
+local Section = MiscTab:CreateSection("Misc")
+
+local Button = MiscTab:CreateButton({
+   Name = "Kill all(broken)",
+   Callback = function()
+  _G.Stop = false
+ 
+repeat game:GetService("RunService").RenderStepped:Wait()
+for _,v in next, game:GetService("Players"):GetPlayers() do
+if v ~= game:GetService("Players").LocalPlayer then
+local char = v.Character or workspace:FindFirstChild(v.Name)
+if char then
+pcall(function()
+char.Head.Anchored = true
+char.Head.CFrame = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,2,-2.5)
+end)
+end
+end
+end
+until _G.Stop
+   end,
+})
+
+local Toggle = MiscTab:CreateToggle({
+   Name = "Auto farm",
+   CurrentValue = false,
+   Flag = "Farm", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+   --[[
+
+]]
+repeat
+    wait()
+until game:IsLoaded()
+local gm = getrawmetatable(game)
+setreadonly(gm, false)
+local namecall = gm.__namecall
+gm.__namecall =
+    newcclosure(
+    function(self, ...)
+        local args = {...}
+        if not checkcaller() and getnamecallmethod() == "FireServer" and tostring(self) == "MainEvent" then
+            if tostring(getcallingscript()) ~= "Framework" then
+                return
+            end
+        end
+        if not checkcaller() and getnamecallmethod() == "Kick" then
+            return
+        end
+        return namecall(self, unpack(args))
+    end
+)
+
+local LocalPlayer = game:GetService("Players").LocalPlayer
+
+function gettarget()
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:wait()
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+    local maxdistance = math.huge
+    local target
+    for i, v in pairs(game:GetService("Workspace").Cashiers:GetChildren()) do
+        if v:FindFirstChild("Head") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+            local distance = (HumanoidRootPart.Position - v.Head.Position).magnitude
+            if distance < maxdistance then
+                target = v
+                maxdistance = distance
+            end
+        end
+    end
+    return target
+end
+
+for i, v in pairs(workspace:GetDescendants()) do
+    if v:IsA("Seat") then
+        v:Destroy()
+    end
+end
+
+print("Amnesia's Da Hood Farm")
+
+shared.MoneyFarm = true -- Just execute shared.MoneyFarm = false to stop farming
+
+while shared.MoneyFarm do
+    wait()
+    local Target = gettarget()
+    repeat
+        wait()
+        pcall(
+            function()
+                local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:wait()
+                local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+                local Combat = LocalPlayer.Backpack:FindFirstChild("Combat") or Character:FindFirstChild("Combat")
+                if not Combat then
+                    Character:FindFirstChild("Humanoid").Health = 0
+                    return
+                end
+                HumanoidRootPart.CFrame = Target.Head.CFrame * CFrame.new(0, -2.5, 3)
+                Combat.Parent = Character
+                Combat:Activate()
+            end
+        )
+    until not Target or Target.Humanoid.Health < 0
+    for i, v in pairs(game:GetService("Workspace").Ignored.Drop:GetDescendants()) do
+        if v:IsA("ClickDetector") and v.Parent and v.Parent.Name:find("Money") then
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:wait()
+            local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+            if (v.Parent.Position - HumanoidRootPart.Position).magnitude <= 18 then
+                repeat
+                    wait()
+                    fireclickdetector(v)
+                until not v or not v.Parent.Parent
+            end
+        end
+    end
+    wait(1)
+end
+
+   end,
+})
+
+local Button = MiscTab:CreateButton({
+   Name = "Speed",
+   Callback = function()
+   local player = game:GetService("Players").LocalPlayer
+local zoom1 = (workspace.CurrentCamera.CoordinateFrame.p - player.Character.Head.Position).magnitude
+local zoom2 = player.CameraMaxZoomDistance
+local zoom3 = player.CameraMinZoomDistance
+local counter = 0
+local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+local ws = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
+local guimain = Instance.new("ScreenGui", player.PlayerGui)
+-- Main gui code
+guimain.Name = "Esp"
+local Frame = Instance.new("Frame", guimain)
+-- Frame code
+Frame.Position = UDim2.new(0.850, 0, 0.346, 0)
+Frame.Size = UDim2.new(0, 266, 0, 379)
+Frame.BackgroundColor3 = Color3.fromRGB(57, 57, 57)
+Frame.BorderColor3 = Color3.fromRGB(27, 42, 53)
+Frame.BorderSizePixel = 5
+local t = Instance.new("TextBox", Frame)
+-- Textbox code
+t.Text = ws
+t.Size = UDim2.new(0, 176, 0, 50)
+t.Position = UDim2.new(0.169, 0, 0.182, 0)
+t.BorderSizePixel = 0
+t.TextScaled = true
+t.BackgroundColor3 = Color3.fromRGB(57, 57, 57)
+local box = Instance.new("TextButton", Frame)
+-- Textbutton1 code
+box.Name = "Set"
+box.Text = "Set"
+box.TextScaled = true
+box.Position = UDim2.new(0.124, 0, 0.433, 0)
+box.BackgroundColor3 = Color3.fromRGB(57, 57, 57)
+box.BorderSizePixel = 0
+box.Size = UDim2.new(0, 200, 0, 50)
+box.MouseButton1Click:Connect(function(Set)
+	player.Character.Humanoid.WalkSpeed = t.Text
+	ws = t.Text
+end)
+local box2 = Instance.new("TextButton", Frame)
+-- Textbutton2 code
+box2.Name = "Scroll"
+box2.Text = "Set camera"
+box2.TextScaled = true
+box2.Position = UDim2.new(0.124, 0, 0.657, 0)
+box2.BackgroundColor3 = Color3.fromRGB(57, 57, 57)
+box2.BorderSizePixel = 0
+box2.Size = UDim2.new(0, 200, 0, 50)
+local isDisabled = false
+box2.MouseButton1Click:Connect(function()
+	if isDisabled then
+		isDisabled = false
+		player.CameraMaxZoomDistance = zoom2
+		player.CameraMinZoomDistance = zoom3
+	else
+		isDisabled = true		
+		player.CameraMaxZoomDistance = zoom1
+		player.CameraMinZoomDistance = zoom1
+	end
+end)
+local sign = Instance.new("TextLabel", Frame)
+sign.Name = "Sign"
+sign.Text = "Speed gui from spxy gui"
+sign.BorderSizePixel = 0
+sign.TextScaled = true
+sign.BackgroundColor3 = Color3.fromRGB(57, 57, 57)
+sign.Position = UDim2.new(0, 0, 0.897, 0)
+sign.Size = UDim2.new(0, 153, 0, 39)
+mouse.WheelForward:Connect(function()
+	ws = ws + 1
+	print(ws)
+	t.Text = ws
+	player.Character.Humanoid.WalkSpeed = ws
+end)
+mouse.WheelBackward:Connect(function()
+	if ws > 0 then
+	ws = ws - 1
+	print(ws)
+	t.Text = ws
+	player.Character.Humanoid.WalkSpeed = ws
+	end
+end)
+player.Character.Humanoid.Died:Connect(function()
+	player.Character.Humanoid.WalkSpeed = 16
+end)
+while true do 
+	for hue = 0, 255 ,4 do 
+		sign.TextColor3 = Color3.fromHSV(hue/256, 1, 1)
+		wait()
+	end
+end
+   end,
+})
+
+local hubTab = Window:CreateTab("🔨Hub", nil) -- Title, Image
+local Section = hubTab:CreateSection("Hub")
+
+local Button = hubTab:CreateButton({
+   Name = "tps",
+   Callback = function()
+  local TestingGUI = Instance.new("ScreenGui")
+local MainGUI = Instance.new("Frame")
+local PlayerTP_Input = Instance.new("TextBox")
+local PlayerTP_Teleport = Instance.new("TextButton")
+--Properties:
+TestingGUI.Name = "Testing GUI"
+TestingGUI.Parent = game.CoreGui
+ 
+MainGUI.Name = "MainGUI"
+MainGUI.Parent = TestingGUI
+MainGUI.BackgroundColor3 = Color3.new(0.117647, 0.117647, 0.117647)
+MainGUI.BorderColor3 = Color3.new(0, 0, 0)
+MainGUI.BorderSizePixel = 3
+MainGUI.Position = UDim2.new(0.295202941, 0, 0.344621539, 0)
+MainGUI.Size = UDim2.new(0, 332, 0, 155)
+MainGUI.Active = true
+MainGUI.Draggable = true
+ 
+PlayerTP_Input.Name = "PlayerTP_Input"
+PlayerTP_Input.Parent = MainGUI
+PlayerTP_Input.BackgroundColor3 = Color3.new(0, 0, 0)
+PlayerTP_Input.BackgroundTransparency = 0.5
+PlayerTP_Input.BorderColor3 = Color3.new(0, 0, 0)
+PlayerTP_Input.Size = UDim2.new(0, 332, 0, 50)
+PlayerTP_Input.Font = Enum.Font.SourceSans
+PlayerTP_Input.Text = ""
+PlayerTP_Input.TextColor3 = Color3.new(1, 1, 1)
+PlayerTP_Input.TextSize = 14
+ 
+PlayerTP_Teleport.Name = "PlayerTP_Teleport"
+PlayerTP_Teleport.Parent = MainGUI
+PlayerTP_Teleport.BackgroundColor3 = Color3.new(0, 0, 0)
+PlayerTP_Teleport.BackgroundTransparency = 0.5
+PlayerTP_Teleport.BorderColor3 = Color3.new(0, 0, 0)
+PlayerTP_Teleport.Position = UDim2.new(0, 0, 0.677419245, 0)
+PlayerTP_Teleport.Size = UDim2.new(0, 332, 0, 50)
+PlayerTP_Teleport.Font = Enum.Font.SourceSans
+PlayerTP_Teleport.Text = "Teleport To Player"
+PlayerTP_Teleport.TextColor3 = Color3.new(1, 1, 1)
+PlayerTP_Teleport.TextSize = 14
+PlayerTP_Teleport.MouseButton1Click:connect(function()
+    local tp_namedplayer = PlayerTP_Input.Text
+    local tp_player = game:GetService("Players")[tp_namedplayer]
+    local PLR = game:GetService("Players").LocalPlayer
+    local p = PlayerTP_Input.Text
+ 
+    if tp_player then
+        for i = 1,1 do
+        wait(.08)
+        PLR.Character.HumanoidRootPart.CFrame = tp_player.Character.HumanoidRootPart.CFrame + Vector3.new(0, 0, -1)
+        end
+    end
+end)
+            Rayfield:Notify({
+   Title = "telport gui",
+   Content = "you have to type in full username or it wont work",
+   Duration = 6.5,
+   Image = 1227062636609273856,
+   Actions = { -- user just tapped an teleport gui
+      Ignore = {
+         Name = "Bet!",
+         Callback = function()
+         print("teleports")
+      end
+   },
+},
+})
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Cam lock",
+   Callback = function()
+local Library, AimingTab, _ = loadstring(game:HttpGet("https://raw.githubusercontent.com/Stefanuk12/Aiming/main/GUI.lua"))()
+local Aiming = loadstring(game:HttpGet("https://raw.githubusercontent.com/Stefanuk12/Aiming/main/Load.lua"))()("Module")
+local AimingChecks = Aiming.Checks
+local AimingSelected = Aiming.Selected
+local AimingSettingsIgnored = Aiming.Settings.Ignored
+local AimingSettingsIgnoredPlayers = Aiming.Settings.Ignored.Players
+local AimingSettingsIgnoredWhitelistMode = AimingSettingsIgnored.WhitelistMode
+ 
+-- // Services
+local UserInputService = game:GetService("UserInputService")
+ 
+-- // Config
+local Configuration = {
+    -- // The ones under this you may change - if you are a normal user
+    Enabled = true,
+    Method = "FindPartOnRay",
+    FocusMode = false, -- // Stays locked on to that player only. If true then uses the silent aim keybind, if a input type is entered, then that is used
+    ToggleBind = false, -- // true = Toggle, false = Hold (to enable)
+    Keybind = Enum.UserInputType.MouseButton2, -- // You can also have Enum.KeyCode.E, etc.
+ 
+    -- // Do not change anything below here - if you are not a normal user
+    CurrentlyFocused = nil,
+ 
+    MethodResolve = {
+        -- // __namecall methods
+        raycast = {
+            Real = "Raycast",
+            Metamethod = "__namecall",
+            Aliases = {"raycast"}
+        },
+        findpartonray = {
+            Real = "FindPartOnRay",
+            Metamethod = "__namecall",
+            Aliases = {"findPartOnRay"}
+        },
+        findpartonraywithwhitelist = {
+            Real = "FindPartOnRayWithWhitelist",
+            Metamethod = "__namecall",
+            Aliases = {"findPartOnRayWithWhitelist"}
+        },
+        findpartonraywithignorelist = {
+            Real = "FindPartOnRayWithIgnoreList",
+            Metamethod = "__namecall",
+            Aliases = {"findPartOnRayWithIgnoreList"}
+        },
+ 
+        -- // __index methods
+        target = {
+            Real = "Target",
+            Metamethod = "__index",
+            Aliases = {"target"}
+        },
+        hit = {
+            Real = "Hit",
+            Metamethod = "__index",
+            Aliases = {"hit"}
+        },
+        x = {
+            Real = "X",
+            Metamethod = "__index",
+            Aliases = {"x"}
+        },
+        y = {
+            Real = "Y",
+            Metamethod = "__index",
+            Aliases = {"y"}
+        },
+        unitray = {
+            Real = "UnitRay",
+            Metamethod = "__index",
+            Aliases = {"unitray"}
+        },
+    },
+ 
+    ExpectedArguments = {
+        FindPartOnRayWithIgnoreList = {
+            ArgCountRequired = 3,
+            Args = {
+                "Instance", "Ray", "table", "boolean", "boolean"
+            }
+        },
+        FindPartOnRayWithWhitelist = {
+            ArgCountRequired = 3,
+            Args = {
+                "Instance", "Ray", "table", "boolean"
+            }
+        },
+        FindPartOnRay = {
+            ArgCountRequired = 2,
+            Args = {
+                "Instance", "Ray", "Instance", "boolean", "boolean"
+            }
+        },
+        Raycast = {
+            ArgCountRequired = 3,
+            Args = {
+                "Instance", "Vector3", "Vector3", "RaycastParams"
+            }
+        }
+    }
+}
+local IsToggled = false
+Aiming.SilentAim = Configuration
+ 
+-- // Functions
+local function CalculateDirection(Origin, Destination, Length)
+    return (Destination - Origin).Unit * Length
+end
+ 
+-- // Validate arguments passed through namecall
+local function ValidateArguments(Args, Method)
+	--// Get Type Information from Method
+	local TypeInformation = Configuration.ExpectedArguments[Method]
+	if (not TypeInformation) then
+        return false
+    end
+ 
+	--// Make new table for successful matches
+	local Matches = 0
+ 
+	-- // Go through every argument passed
+	for ArgumentPosition, Argument in pairs(Args) do
+		-- // Check if argument type is a certain type
+		if (typeof(Argument) == TypeInformation.Args[ArgumentPosition]) then
+			Matches = Matches + 1
+		end
+	end
+ 
+	-- // Get information
+	local ExpectedValid = #Args
+	local GotValid = Matches
+ 
+	-- // Return whether or not arguments are valid
+	return ExpectedValid == GotValid
+end
+ 
+-- // Additional checks you can add yourself, e.g. upvalue checks
+function Configuration.AdditionalCheck(metamethod, method, callingscript, ...)
+    return true
+end
+ 
+-- // Checks if a certain method is enabled
+local stringsplit = string.split
+local stringlower = string.lower
+local tablefind = table.find
+local function IsMethodEnabled(Method, Given, PossibleMethods)
+    -- // Split it all up
+    PossibleMethods = PossibleMethods or stringsplit(Configuration.Method, ",")
+    Given = Given or Method
+ 
+    -- // Vars
+    local LoweredMethod = stringlower(Method)
+    local MethodData = Configuration.MethodResolve[LoweredMethod]
+    if (not MethodData) then
+        return false, nil
+    end
+ 
+    -- //
+    local Matches = LoweredMethod == stringlower(Given)
+    local RealMethod = MethodData.Real
+    local Found = tablefind(PossibleMethods, RealMethod)
+ 
+    -- // Return
+    return (Matches and Found), RealMethod
+end
+ 
+-- // Allows you to easily toggle multiple methods on and off
+function Configuration.ToggleMethod(Method, State)
+    -- // Vars
+    local EnabledMethods = Configuration.Method:split(",")
+    local FoundI = table.find(EnabledMethods, Method)
+ 
+    -- //
+    if (State) then
+        if (not FoundI) then
+            table.insert(EnabledMethods, Method)
+        end
+    else
+        if (FoundI) then
+            table.remove(EnabledMethods, FoundI)
+        end
+    end
+ 
+    -- // Set
+    Configuration.Method = table.concat(EnabledMethods, ",")
+end
+ 
+-- // Modify the position/cframe, add prediction yourself (use Aiming.Selected)
+function Configuration.ModifyCFrame(OnScreen)
+    return OnScreen and AimingSelected.Position or AimingSelected.Part.CFrame
+end
+ 
+-- // Focuses a player
+local Backup = {table.unpack(AimingSettingsIgnoredPlayers)}
+function Configuration.FocusPlayer(Player)
+    table.insert(AimingSettingsIgnoredPlayers, Player)
+    AimingSettingsIgnoredWhitelistMode.Players = true
+end
+ 
+-- // Unfocuses a player
+function Configuration.Unfocus(Player)
+    -- // Find it within ignored, and remove if found
+    local PlayerI = table.find(AimingSettingsIgnoredPlayers, Player)
+    if (PlayerI) then
+        table.remove(AimingSettingsIgnoredPlayers, PlayerI)
+    end
+ 
+    -- // Disable whitelist mode
+    AimingSettingsIgnoredWhitelistMode.Players = false
+end
+ 
+-- // Unfocuses everything
+function Configuration.UnfocusAll(Replacement)
+    Replacement = Replacement or Backup
+    AimingSettingsIgnored.Players = Replacement
+    AimingSettingsIgnoredWhitelistMode.Players = false
+end
+ 
+-- //
+function Configuration.FocusHandler()
+    if (Configuration.CurrentlyFocused) then
+        Configuration.Unfocus(Configuration.CurrentlyFocused)
+        Configuration.CurrentlyFocused = nil
+        return
+    end
+ 
+    if (AimingChecks.IsAvailable()) then
+        Configuration.FocusPlayer(AimingSelected.Instance)
+        Configuration.CurrentlyFocused = AimingSelected.Instance
+    end
+end
+ 
+-- // For the toggle and stuff
+local function CheckInput(Input, Expected)
+    local InputType = Expected.EnumType == Enum.KeyCode and "KeyCode" or "UserInputType"
+    return Input[InputType] == Expected
+end
+ 
+UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
+    -- // Make sure is not processed
+    if (GameProcessedEvent) then
+        return
+    end
+ 
+    -- // Check if matches bind
+    local FocusMode = Configuration.FocusMode
+    if (CheckInput(Input, Configuration.Keybind)) then
+        if (Configuration.ToggleBind) then
+            IsToggled = not IsToggled
+        else
+            IsToggled = true
+        end
+ 
+        if (FocusMode == true) then
+            Configuration.FocusHandler()
+        end
+    end
+ 
+    -- // FocusMode check
+    if (typeof(FocusMode) == "Enum" and CheckInput(Input, FocusMode)) then
+        Configuration.FocusHandler()
+    end
+end)
+UserInputService.InputEnded:Connect(function(Input, GameProcessedEvent)
+    -- // Make sure is not processed
+    if (GameProcessedEvent) then
+        return
+    end
+ 
+    -- // Check if matches bind
+    if (CheckInput(Input, Configuration.Keybind) and not Configuration.ToggleBind) then
+        IsToggled = false
+    end
+end)
+ 
+-- // Hooks
+local __index
+__index = hookmetamethod(game, "__index", function(t, k)
+    -- // Vars
+    local callingscript = getcallingscript()
+ 
+    -- // Make sure everything is in order
+    if (t:IsA("Mouse") and not checkcaller() and IsToggled and Configuration.Enabled and AimingChecks.IsAvailable()) then
+        -- // Vars
+        local MethodEnabled, RealMethod = IsMethodEnabled(k)
+ 
+        -- // Make sure everything is in order 2
+        if (not MethodEnabled or not Configuration.AdditionalCheck("__index", nil, callingscript, t, RealMethod)) then
+            return __index(t, k)
+        end
+ 
+        -- // Target
+        if (RealMethod == "Target") then
+            return AimingSelected.Part
+        end
+ 
+        -- // Hit
+        if (RealMethod == "Hit") then
+            return Configuration.ModifyCFrame(false)
+        end
+ 
+        -- // X/Y
+        if (RealMethod == "X" or RealMethod == "Y") then
+            return Configuration.ModifyCFrame(true)[k]
+        end
+ 
+        -- // UnitRay
+        if (RealMethod == "UnitRay") then
+            local Origin = __index(t, k).Origin
+            local Direction = CalculateDirection(Origin, Configuration.ModifyCFrame(false).Position)
+            return Ray.new(Origin, Direction)
+        end
+    end
+ 
+    -- // Return
+    return __index(t, k)
+end)
+ 
+local __namecall
+__namecall = hookmetamethod(game, "__namecall", function(...)
+    -- // Vars
+    local args = {...}
+    local self = args[1]
+    local method = getnamecallmethod()
+    local callingscript = getcallingscript()
+ 
+    -- // Make sure everything is in order
+    if (self == workspace and not checkcaller() and IsToggled and Configuration.Enabled and AimingChecks.IsAvailable()) then
+        -- // Vars
+        local MethodEnabled, RealMethod = IsMethodEnabled(method)
+ 
+        -- // Make sure all is in order 2
+        if (not MethodEnabled or not ValidateArguments(args, RealMethod) and Configuration.AdditionalCheck("__namecall", RealMethod, callingscript, ...)) then
+            return __namecall(...)
+        end
+ 
+        -- // Raycast
+        if (RealMethod == "Raycast") then
+            -- // Modify args
+            args[3] = CalculateDirection(args[2], Configuration.ModifyCFrame(false).Position, 1000)
+ 
+            -- // Return
+            return __namecall(unpack(args))
+        end
+ 
+        -- // The rest pretty much, modify args
+        local Origin = args[2].Origin
+        local Direction = CalculateDirection(Origin, __index(AimingSelected.Part, "Position"), 1000)
+        args[2] = Ray.new(Origin, Direction)
+ 
+        -- // Return
+        return __namecall(unpack(args))
+    end
+ 
+    -- //
+    return __namecall(...)
+end)
+ 
+ 
+-- // GUI
+local SilentAimGroupBox = AimingTab:AddLeftTabbox("Silent Aim")
+local MainTab = SilentAimGroupBox:AddTab("Main")
+local MethodsTab = SilentAimGroupBox:AddTab("Methods")
+ 
+MainTab:AddToggle("SilentAimEnabled", {
+    Text = "Enabled",
+    Default = Configuration.Enabled,
+    Tooltip = "Toggle the Silent Aim on and off",
+    Callback = function(Value)
+        Configuration.Enabled = Value
+    end
+}):AddKeyPicker("SilentAimEnabledKey", {
+    Default = Configuration.Keybind,
+    SyncToggleState = false,
+    Mode = Configuration.ToggleBind and "Toggle" or "Hold",
+    Text = "Silent Aim",
+    NoUI = false,
+    ChangedCallback = function(Key)
+        Configuration.Keybind = Key
+    end
+})
+MainTab:AddToggle("SilentAimEnabledToggle", {
+    Text = "Toggle Mode",
+    Default = Configuration.ToggleBind,
+    Tooltip = "When disabled, it is hold to activate.",
+    Callback = function(Value)
+        Configuration.ToggleBind = Value
+ 
+        Options.SilentAimEnabledKey.Mode = Value and "Toggle" or "Hold"
+        Options.SilentAimEnabledKey:Update()
+    end
+})
+ 
+MainTab:AddToggle("SilentAimFocusMode", {
+    Text = "Focus Mode",
+    Default = Configuration.Enabled,
+    Tooltip = "Only targets the current targetted player",
+    Callback = function(Value)
+        Configuration.FocusMode = Value
+    end
+}):AddKeyPicker("SilentAimFocusModeKey", {
+    Default = Configuration.Keybind,
+    SyncToggleState = false,
+    Text = "Focus Mode",
+    NoUI = false,
+    ChangedCallback = function(Key)
+        Configuration.FocusMode = Key
+    end
+})
+ 
+-- // Adding each method
+local Methods = {}
+for _, method in pairs(Configuration.MethodResolve) do
+    table.insert(Methods, method.Real)
+end
+ 
+-- //
+local function GetDictKeys(Dictionary)
+    local Keys = {}
+    for key, _ in pairs(Dictionary) do
+        table.insert(Keys, key)
+    end
+    return Keys
+end
+MethodsTab:AddDropdown("SilentAimMethods", {
+    Values = Methods,
+    Default = Configuration.Method:split(","),
+    Multi = true,
+    Text = "Methods",
+    Tooltip = "The possible silent aim methods to enable",
+    Callback = function(Value)
+        Configuration.Method = table.concat(GetDictKeys(Value), ",")
+    end
+})
+ 
+Library.KeybindFrame.Visible = true;
+})
